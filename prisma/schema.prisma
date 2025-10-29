@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:Atlet13k!@localhost:3306/drive2gether"
+}
+
+model car {
+  ID                 Int     @id @default(autoincrement())
+  Model              String? @db.VarChar(100)
+  Brand              String? @db.VarChar(100)
+  LicensePlate       String  @unique(map: "LicensePlate") @db.VarChar(50)
+  Color              String? @db.VarChar(50)
+  DriverLicenseImage String? @db.VarChar(500)
+  IdentityCardImage  String? @db.VarChar(500)
+  DriverID           Int
+  user               user    @relation(fields: [DriverID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "car_ibfk_1")
+  trip               trip[]
+
+  @@index([DriverID], map: "DriverID")
+}
+
+model trip {
+  ID             Int                 @id @default(autoincrement())
+  DeparturePlace String              @db.VarChar(255)
+  DepartureTime  DateTime            @db.DateTime(0)
+  ArrivalPlace   String              @db.VarChar(255)
+  Price          Decimal?            @db.Decimal(10, 2)
+  PaymentMethod  trip_PaymentMethod?
+  CarID          Int
+  car            car                 @relation(fields: [CarID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "trip_ibfk_1")
+  trippassenger  trippassenger[]
+
+  @@index([CarID], map: "CarID")
+}
+
+model trippassenger {
+  TripID      Int
+  PassengerID Int
+  Status      trippassenger_Status?
+  trip        trip                  @relation(fields: [TripID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "trippassenger_ibfk_1")
+  user        user                  @relation(fields: [PassengerID], references: [ID], onDelete: NoAction, onUpdate: NoAction, map: "trippassenger_ibfk_2")
+
+  @@id([TripID, PassengerID])
+  @@index([PassengerID], map: "PassengerID")
+}
+
+model user {
+  ID            Int             @id @default(autoincrement())
+  FirstName     String          @db.VarChar(100)
+  LastName      String          @db.VarChar(100)
+  Age           Int
+  PhoneNumber   String          @unique(map: "PhoneNumber") @db.VarChar(20)
+  Email         String          @unique(map: "Email") @db.VarChar(255)
+  Address       String          @db.VarChar(500)
+  Picture       String?         @db.VarChar(500)
+  Password      String          @db.VarChar(255)
+  Role          user_Role
+  car           car[]
+  trippassenger trippassenger[]
+}
+
+enum trippassenger_Status {
+  Pending
+  Confirmed
+  Cancelled
+}
+
+enum trip_PaymentMethod {
+  Cash
+  Card
+  Online
+}
+
+enum user_Role {
+  Driver
+  Passenger
+  Both
+}
