@@ -95,6 +95,8 @@ model user {
   Email                            String?            @unique(map: "Email") @db.VarChar(255)
   Address                          String?            @db.VarChar(255)
   PasswordHash                     String?            @db.VarChar(255)
+  PhoneNumber                      String?            @db.VarChar(255)
+  CreatedAt                        DateTime?          @default(now()) @db.DateTime(0)
   car                              car[]
   message_message_SenderIDTouser   message[]          @relation("message_SenderIDTouser")
   message_message_ReceiverIDTouser message[]          @relation("message_ReceiverIDTouser")

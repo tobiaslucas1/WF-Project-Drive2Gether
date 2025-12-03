@@ -5,7 +5,6 @@ const express = require('express');
 const router = express.Router();
 
 const { PrismaClient } = require('@prisma/client'); 
-const { use } = require('react');
 const prisma = new PrismaClient();
 
 const userSelectFields = {
@@ -37,9 +36,10 @@ router.get('/', async (req, res) => {
       },
       Reviews: true
     }
-  });
- }) 
-res.json(trips);
+  })
+  res.json(trips);
+ })
+
 
 // ------------------------------
 // [Get]  /trips/:id
@@ -64,6 +64,7 @@ router.get('/:id', async (req, res) => {
       },
       Reviews: true
     }
+    
   });
 
 res.json(trips);

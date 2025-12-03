@@ -30,10 +30,18 @@ router.get('/', async (req, res) => {
 
 // ------------------------------
 // [Post] users 
-// Registreert een nieuwe gebruiker
+// Register a new user
 // ------------------------------
 router.post('/', async (req, res) => {
-  const { FirstName, LastName, DateOfBirth, PhoneNumber, Email, Address, Password,} = req.body;  
+  
+  const FirstName = req.body.FirstName;
+  const LastName = req.body.LastName;
+  const DateOfBirth = req.body.DateOfBirth;
+  const PasswordHash = req.body.PasswordHash;
+  const PhoneNumber = req.body.PhoneNumber;
+  const Address = req.body.Address;
+  const Email = req.body.Email;
+
   // Check if user with this email already exists
   const checkUserExists = await prisma.user.findMany({
     where: {
@@ -41,7 +49,6 @@ router.post('/', async (req, res) => {
     }
   });
   
-  const hashedPassword = Password; // placeholder ZONDER hashing!
 
   if (checkUserExists.length > 0) {
     res.json({
@@ -52,17 +59,17 @@ router.post('/', async (req, res) => {
       data: {
         FirstName,
         LastName,
-        DateOfBirth,
+        DateOfBirth: new Date(DateOfBirth),
         PhoneNumber,
         Email,
         Address,
-        PasswordHash: hashedPassword
+        PasswordHash
       },
       select:{ // Never Returns the Password
         UserID: true,
         FirstName: true,
         Email:true,
-        CreatedAt: true,
+        CreatedAt:true,
       }
     });
     res.json(newUser);
@@ -74,18 +81,25 @@ router.post('/', async (req, res) => {
 // [Put] users 
 // ------------------------------
 router.put('/:id', async (req, res) => {
-  let userId = req.params.id;
-  let { FirstName, LastName, DateOfBirth, PhoneNumber, Email, Address, Password } = req.body;
+  const userId = req.params.id;
+
+  const FirstName = req.body.FirstName;
+  const LastName = req.body.LastName;
+  const DateOfBirth = req.body.DateOfBirth;
+  const PasswordHash = req.body.PasswordHash;
+  const PhoneNumber = req.body.PhoneNumber;
+  const Address = req.body.Address;
+  const Email = req.body.Email;
   
 
-  let updatedUser = await prisma.user.update({
+  const updatedUser = await prisma.user.update({
     where: {
       UserID: parseInt(userId)
     },
     data: {
       FirstName,
       LastName,
-      DateOfBirth,
+      DateOfBirth: new Date(DateOfBirth),
       PhoneNumber,
       Email,
       Address
